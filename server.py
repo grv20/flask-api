@@ -51,3 +51,48 @@ class BlogPost(db.Model):
     body = db.Column(db.String(200))
     date = db.Column(db.Date)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+#routes
+@app.route("/user", methods=["POST"])
+def create_user():
+    pass
+#A decorator that is used to register a view function for a given URL Rule. 
+
+@app.route("/user/descending_id", methods=["GET"])
+def get_all_users_descending():
+    pass
+
+@app.route("/user/ascending_id", methods=["GET"])
+def get_all_users_ascending():
+    pass
+
+@app.route("/user/<user_id>", methods=["GET"])
+def get_one_user(user_id):
+    pass
+    
+@app.route("/user/<user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    pass
+
+@app.route("/blog_post/<user_id>", methods=["POST"])
+def create_blog_post(user_id):
+    pass
+
+@app.route("/user/<user_id>", methods=["GET"])
+def get_all_blog_posts(user_id):
+    pass
+
+@app.route("/blog_post/<blog_post_id>", methods=["GET"])
+def get_one_blog_post(blog_post_id):
+    pass
+
+@app.route("/blog_post/<blog_post_id>", methods=["DELETE"])
+def delete_blog_post(blog_post_id):
+    pass
+
+if __name__ == "__main__":
+    app.run(debug=True)
+#if we are this file server.py as our main application
+#then we are going to start our api with debug=True
+#i.e. if we are running like python server.py --> then it will
+#set __name__ to __main__ (bcoz server.py is main file in that case)
