@@ -4,7 +4,8 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-import linked_list
+from linked_list import LinkedList
+from hash_table import HashTable
 
 #app
 app = Flask(__name__)
@@ -72,7 +73,7 @@ def create_user():
 @app.route("/user/descending_id", methods=["GET"])
 def get_all_users_descending():
     users = User.query.all()
-    all_users_ll = linked_list.LinkedList()
+    all_users_ll = LinkedList()
     for user in users:
         all_users_ll.insert_beginning(
             {
@@ -89,7 +90,7 @@ def get_all_users_descending():
 @app.route("/user/ascending_id", methods=["GET"])
 def get_all_users_ascending():
     users = User.query.all()
-    all_users_ll = linked_list.LinkedList()
+    all_users_ll = LinkedList()
     for user in users:
         all_users_ll.insert_at_end(
             {
@@ -105,7 +106,7 @@ def get_all_users_ascending():
 @app.route("/user/<user_id>", methods=["GET"])
 def get_one_user(user_id):
     users = User.query.all()
-    all_users_ll = linked_list.LinkedList()
+    all_users_ll = LinkedList()
     for user in users:
         all_users_ll.insert_beginning(
             {
@@ -129,7 +130,26 @@ def delete_user(user_id):
 
 @app.route("/blog_post/<user_id>", methods=["POST"])
 def create_blog_post(user_id):
-    pass
+    data = request.get_json()
+    user = User.query.filter_by(id=user_id).first()
+    if not user:
+        return jsonify({"message":"user doesn't exist!"}), 400
+    ht = HashTable(10)
+    ht.add_key_value("title",data["title"])
+    ht.add_key_value("body",data["body"])
+    ht.add_key_value("date",now)
+    ht.add_key_value("user_id", user_id)
+
+    new_blog_post = BlogPost(
+        title=ht.get_value("title"),
+        body=ht.get_value("body"),
+        date=ht.get_value("date"),
+        user_id=ht.get_value("user_id")
+    )
+    db.session.add(new_blog_post)
+    db.session.commit()
+    return jsonify({"message": "new blog post created!"}),200
+    
 
 @app.route("/user/<user_id>", methods=["GET"])
 def get_all_blog_posts(user_id):
