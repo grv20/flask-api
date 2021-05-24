@@ -6,7 +6,8 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from linked_list import LinkedList
 from hash_table import HashTable
-
+from binary_search_tree import BinarySearchTree
+import random
 #app
 app = Flask(__name__)
 print(__name__)
@@ -151,9 +152,24 @@ def create_blog_post(user_id):
     return jsonify({"message": "new blog post created!"}),200
     
 
-@app.route("/user/<user_id>", methods=["GET"])
-def get_all_blog_posts(user_id):
-    pass
+@app.route("/blog_post/<blog_post_id>", methods=["GET"])
+def get_all_blog_posts(blog_post_id):
+    blog_posts = BlogPost.query.all()
+    #binary_search treee is not efficient when data is fed in
+    #ascending or descending order
+    random.shuffle(blog_posts)
+    bst = BinarySearchTree()
+    for post in blog_posts:
+        bst.insert({
+            "id": post.id,
+            "title": post.title,
+            "body": post.body,
+            "user_id": post.user_id            
+        })
+    post = bst.search(blog_post_id)
+    if not post:
+        return jsonify({"message": "post not found"})
+    return jsonify(post)
 
 @app.route("/blog_post/<blog_post_id>", methods=["GET"])
 def get_one_blog_post(blog_post_id):
